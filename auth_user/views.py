@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import views, response, permissions
 from django.contrib.auth import login, logout
 from .authentication import CsrfExemptSessionAuthentication
@@ -22,3 +23,11 @@ class LogoutView(views.APIView):
     def post(self, request):
         logout(request)
         return response.Response()
+
+
+class SessionUserView(views.APIView):
+
+    def get(self, request):
+        user = User.objects.get(pk=self.request.user.id)
+        serializer = UserSerializer(user)
+        return response.Response(data=serializer.data)
