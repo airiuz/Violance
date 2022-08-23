@@ -4,17 +4,7 @@ from paddleocr import PaddleOCR
 import sqlite3
 from Violance import Violance_Detection
 
-if __name__=="__main__":
-
-    path = input()
-    # Connect database and create table
-    baza = sqlite3.connect('qoidabuzarlik.db')
-    global cursor
-    cursor = baza.cursor()
-    cursor.execute("DROP TABLE avtomobil")
-    cursor.execute("CREATE TABLE avtomobil(path varchar(20), number varchar(8), vaqt varchar(10))")
-    baza.commit()
-    
+def main(path):
     # Object detection for 2 classes: 'transport' and 'odam'
     model = torch.hub.load('ultralytics/yolov5','custom','models/310_best.pt')
     model_np = torch.hub.load('ultralytics/yolov5','custom','models/number_plate.pt')
