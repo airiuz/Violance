@@ -51,3 +51,4 @@ wheels/
 *.egg
 db.sqlite3
 media
+get-pip.py
