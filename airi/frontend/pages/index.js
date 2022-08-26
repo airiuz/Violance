@@ -22,7 +22,7 @@ export default function Home() {
             <div className="flex-1">
               <img
                 className="rounded w-full h-[500px] border shadow-sm"
-                src={data}
+                src={`http://127.0.0.1:8000/v1/api/rule/${data.id}`}
                 alt="camera"
               />
               {/* <Clip url={data?.videofile} /> */}
@@ -152,7 +152,7 @@ function Form({ dataState }) {
 
     e.preventDefault();
     axios
-      .post("/api/rule/uploads/", formData)
+      .post("/api/rule/", formData)
       .then((res) => {
         dataState(res.data);
         setVideo({ name: null, path: null });

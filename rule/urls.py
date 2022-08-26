@@ -1,7 +1,7 @@
-from .views import UploadFileViewset
+from .views import streamvideo, UploadFileView
 from django.urls import path, include
 
-
 urlpatterns = [
-    path('', UploadFileViewset.as_view(), name='uploads'),
+    path('', UploadFileView.as_view(), name='upload'),
+    path('<int:video_id>/', streamvideo, name='stream'),
 ]
