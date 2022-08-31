@@ -120,7 +120,10 @@ def stream(path):
         # ------- Liniya chizish ------- #
         # cv2.line(frame,(0,int(y_zebra)),(int(width),int(y_zebra)),(0,255,0),3)
         if y_zebra is None and len(transports_half_frame) == 0 and len(people_half_frame) == 0:
-            y_zebra = ob.get_y_from_zebra(model_zebra, frame)
+            try:
+                y_zebra = ob.get_y_from_zebra(model_zebra, frame)
+            except:
+                pass
 
         if plate_coord is None and len(transports_half_frame) > 0:
             plate_coord = ob.number_plate_detect_all(transports_half_frame, half_frame, model_np)

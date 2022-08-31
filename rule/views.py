@@ -8,7 +8,6 @@ from .models import UploadFile
 from .serializers import UploadFileSerializers
 from main import stream
 from pathlib import Path
-#from .form import UploadForm
 import json
 
 
