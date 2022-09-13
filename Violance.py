@@ -106,7 +106,7 @@ class Violance_Detection:
     # -------------------------------------------------------------------------------------------------#
 
     # ----------------------Qizil chiziqdan o'tgan va qoida buzgan mashinani nomerini qaytaradi-------------------------#
-    def violation_cars_numbers(self, frame, people_half_frame, transports, y_zebra, model_np, ocr):
+    def violation_cars_numbers(self, frame, people_half_frame, transports, y_zebra, model_np, ocr, upload):
         count = 0
         for person in people_half_frame:
             count += 1
@@ -114,7 +114,7 @@ class Violance_Detection:
         for transport in transports:
             bbox, conf, num, name = transport[0], transport[1], transport[2], transport[3]
 
-            if bbox[1] < y_zebra and y_zebra < bbox[3] and count > 3:
+            if bbox[1] < y_zebra and y_zebra < bbox[3] and count >= 1:
                 automobile = frame[int(bbox[1]):int(bbox[3]), int(bbox[0]):int(bbox[2])]
                 plate_coord = self.number_plate_detector(automobile, model_np)
 
@@ -129,7 +129,7 @@ class Violance_Detection:
                     plate_number = self.number_recognition(plate, ocr)
                     if len(plate_number) == 8:
                         try:
-                            a = Violance.objects.get(frame=path)
+                            a = Violence.objects.get(frame=path)
                             a.first()
                         except:
                             path = f"violance qoidabuzarlar/violation_car/rasm{self.son}.jpg"
@@ -137,11 +137,10 @@ class Violance_Detection:
                             cv2.imwrite(path, frame)
                             cv2.imwrite(path_number, plate)
                             self.son += 1
-                    Violence.objects.create(
-                                                frame=path,
-                                                numbers_car_frame=path_number,
-                                                numbers_car=plate_number,
-                                                type='zebra'
-                                            )
-
-
+                            Violence.objects.create(
+                                frame=path,
+                                numbers_car_frame=path_number,
+                                numbers_car=plate_number,
+                                type='zebra',
+                                uploaded_file=upload
+                            )

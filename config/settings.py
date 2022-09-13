@@ -38,10 +38,12 @@ INSTALLED_APPS = [
 
     # 3 rd
     'rest_framework',
+    'channels',
 
     # local
     'auth_user',
     'rule',
+    'realtime',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +74,19 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'config.asgi.application'
 WSGI_APPLICATION = 'config.wsgi.application'
+
+# Channels
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

@@ -22,7 +22,8 @@ export default function Home() {
             <div className="flex-1">
               <img
                 className="rounded w-full h-[500px] border shadow-sm"
-                src={`http://127.0.0.1:8000/v1/api/rule/${data.id}`}
+                // src={`http://127.0.0.1:8000/v1/api/rule/${data.id}`}
+                src={`http://127.0.0.1:8000/v1/api/rule/114`}
                 alt="camera"
               />
               {/* <Clip url={data?.videofile} /> */}

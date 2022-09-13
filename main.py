@@ -77,7 +77,7 @@ from Violance import Violance_Detection
 
 # Object detection for 2 classes: 'transport' and 'odam'
 
-def stream(path):
+def stream(path, upload):
     model = torch.hub.load('ultralytics/yolov5', 'custom', 'models/310_best.pt')
     model_np = torch.hub.load('ultralytics/yolov5', 'custom', 'models/number_plate.pt')
     model_zebra = torch.hub.load('ultralytics/yolov5', 'custom', 'models/zebra100.pt')
@@ -91,12 +91,13 @@ def stream(path):
     width = video.get(3)
     height = video.get(4)
 
-    y_zebra = None
+    y_zebra = 100
     plate_coord = None
     while True:
         ret, frame = video.read()
         result = model(frame)
-
+        if result is not None:
+            pass
         bboxes = result.pandas().xyxy[0]
 
         transports = ob.detect_objects(bboxes, 'transport')
@@ -118,7 +119,7 @@ def stream(path):
         """
 
         # ------- Liniya chizish ------- #
-        # cv2.line(frame,(0,int(y_zebra)),(int(width),int(y_zebra)),(0,255,0),3)
+        cv2.line(frame, (0, int(y_zebra)), (int(width), int(y_zebra)), (0, 255, 0), 3)
         if y_zebra is None and len(transports_half_frame) == 0 and len(people_half_frame) == 0:
             y_zebra = ob.get_y_from_zebra(model_zebra, frame)
 
@@ -126,22 +127,22 @@ def stream(path):
             plate_coord = ob.number_plate_detect_all(transports_half_frame, half_frame, model_np)
 
         if y_zebra is not None and plate_coord is not None:
-            ob.set_red_line(y_zebra, plate_coord, frame)
-
-            cv2.line(frame, (0, int(y_zebra)), (int(width), int(y_zebra)), (0, 255, 0), 1)
+            # ob.set_red_line(y_zebra, plate_coord, frame)
+            pass
+            # cv2.line(frame, (0, int(y_zebra)), (int(width), int(y_zebra)), (0, 255, 0), 1)
 
         # ------- Qoidabuzarlikni aniqlash ------- #
 
         if y_zebra is not None:
-            ob.violation_cars_numbers(frame, people_half_frame, transports, y_zebra, model_np, ocr)
+            ob.violation_cars_numbers(frame, people_half_frame, transports, y_zebra, model_np, ocr, upload)
 
         # frame_flip = cv2.flip(frame, 1)
 
         scale_percent = 20  # percent of original size
 
-        width = int(frame.shape[1] * scale_percent / 100)
-        height = int(frame.shape[0] * scale_percent / 100)
-        dim = (width, height)
+        width1 = int(frame.shape[1] * scale_percent / 100)
+        height1 = int(frame.shape[0] * scale_percent / 100)
+        dim = (width1, height1)
 
         # resize image
         resizedd = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
