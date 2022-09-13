@@ -22,8 +22,7 @@ export default function Home() {
             <div className="flex-1">
               <img
                 className="rounded w-full h-[500px] border shadow-sm"
-                // src={`http://127.0.0.1:8000/v1/api/rule/${data.id}`}
-                src={`http://127.0.0.1:8000/v1/api/rule/114`}
+                src={`http://127.0.0.1:8000/v1/api/rule/${data.id}`}
                 alt="camera"
               />
               {/* <Clip url={data?.videofile} /> */}
@@ -142,7 +141,7 @@ function Form({ dataState }) {
   const [value, setValue] = useState({ input: "", select: "UPLOAD" });
   const [selectHide, setSelectHide] = useState(false);
   const browse = useRef();
-
+const [load,setLoad]=useState(0)
   const [video, setVideo] = useState({ name: null, path: null });
 
   let formData = new FormData();
@@ -153,131 +152,136 @@ function Form({ dataState }) {
 
     e.preventDefault();
     axios
-      .post("/api/rule/", formData)
+      .post("/api/rule/", formData,{
+        onUploadProgress: event => setLoad(parseInt(event.loaded /event.total*100))
+      })
       .then((res) => {
-        dataState(res.data);
+        dataState(res.data.id);
         setVideo({ name: null, path: null });
+        console.log(res.data);
       })
       .catch((error) => {
         console.log(error);
       });
   };
   return (
-    <form className="flex flex-col space-y-6">
-      <div className="relative select-none cursor-pointer">
-        <div
-          onClick={() => {
-            setSelectHide(!selectHide);
-          }}
-        >
-          <div className="absolute inset-y-0 flex items-center px-3 border-l my-2 right-0">
-            <div
-              className={`w-3 h-3 fill-sky-500 transition-all duration-500 ${
-                selectHide && "rotate-180"
-              }`}
-            >
-              {arrow}
-            </div>
-          </div>
-          <div className="px-3 py-2 w-72 border border-indigo-500 rounded">
-            {value.select}
-          </div>
-        </div>
-        {selectHide && (
-          <div className="absolute bg-white top-full rounded inset-x-0 border border-indigo-500 space-y-1 mt-1">
-            <div
-              className={`${
-                value.select === "IP" && "bg-sky-500 text-white rounded-t"
-              } p-3`}
-              onClick={() => {
-                setSelectHide(false);
-                setValue((prevValue) => {
-                  return { ...prevValue, select: "IP" };
-                });
-              }}
-            >
-              IP
-            </div>
-            <div
-              className={`${
-                value.select === "UPLOAD" && "bg-sky-500 text-white rounded-b"
-              } p-3`}
-              onClick={() => {
-                setSelectHide(false);
-                setValue((prevValue) => {
-                  return { ...prevValue, select: "UPLOAD" };
-                });
-              }}
-            >
-              UPLOAD
-            </div>
-          </div>
-        )}
-      </div>
-      {value.select === "IP" ? (
-        <MaskedInput
-          className="w-72 border border-indigo-500 px-3 py-2 rounded outline-none focus:border-sky-600"
-          mask={[
-            /[0-2]/,
-            /[0-5]/,
-            /[0-5]/,
-            ".",
-            /[0-2]/,
-            /[0-5]/,
-            /[0-5]/,
-            ".",
-            /[0-2]/,
-            /[0-5]/,
-            /[0-5]/,
-            ".",
-            /[0-2]/,
-            /[0-5]/,
-            /[0-5]/,
-          ]}
-          onChange={(e) => {
-            setValue((prevValue) => {
-              return { ...prevValue, input: e.target.value };
-            });
-          }}
-          placeholder="IP address"
-        />
-      ) : (
-        <div className="space-y-6">
-          <div className="border border-indigo-500 w-72 p-4 rounded">
-            <div
-              className="border border-indigo-500 cursor-pointer border-dashed flex flex-col fill-sky-700 text-sky-700  items-center justify-center rounded h-28"
-              onClick={() => {
-                browse.current.click();
-              }}
-            >
-              <input
-                onChange={(e) => {
-                  setVideo({
-                    name: e.target.files[0].name,
-                    path: e.target.files[0],
-                  });
-                }}
-                ref={browse}
-                type={"file"}
-                hidden
-              />
-              <div className="w-8 h-8">{cloud}</div>
-              <p className="text-sm font-semibold">Browse File to Upload</p>
-            </div>
-          </div>
-          {video.name && (
-            <div className="flex space-x-1 justify-between items-center">
-              <p className="w-40 truncate">{video.name}</p>
-              <button
-                className="bg-indigo-500 text-sm rounded py-2 px-4 uppercase text-white"
-                onClick={submitFileData}
-              >
-                jonatish
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </form>
+   <> <form className="flex flex-col space-y-6">
+   <div className="relative select-none cursor-pointer">
+     <div
+       onClick={() => {
+         setSelectHide(!selectHide);
+       }}
+     >
+       <div className="absolute inset-y-0 flex items-center px-3 border-l my-2 right-0">
+         <div
+           className={`w-3 h-3 fill-sky-500 transition-all duration-500 ${
+             selectHide && "rotate-180"
+           }`}
+         >
+           {arrow}
+         </div>
+       </div>
+       <div className="px-3 py-2 w-72 border border-indigo-500 rounded">
+         {value.select}
+       </div>
+     </div>
+     {selectHide && (
+       <div className="absolute bg-white top-full rounded inset-x-0 border border-indigo-500 space-y-1 mt-1">
+         <div
+           className={`${
+             value.select === "IP" && "bg-sky-500 text-white rounded-t"
+           } p-3`}
+           onClick={() => {
+             setSelectHide(false);
+             setValue((prevValue) => {
+               return { ...prevValue, select: "IP" };
+             });
+           }}
+         >
+           IP
+         </div>
+         <div
+           className={`${
+             value.select === "UPLOAD" && "bg-sky-500 text-white rounded-b"
+           } p-3`}
+           onClick={() => {
+             setSelectHide(false);
+             setValue((prevValue) => {
+               return { ...prevValue, select: "UPLOAD" };
+             });
+           }}
+         >
+           UPLOAD
+         </div>
+       </div>
+     )}
+   </div>
+   {value.select === "IP" ? (
+     <MaskedInput
+       className="w-72 border border-indigo-500 px-3 py-2 rounded outline-none focus:border-sky-600"
+       mask={[
+         /[0-2]/,
+         /[0-5]/,
+         /[0-5]/,
+         ".",
+         /[0-2]/,
+         /[0-5]/,
+         /[0-5]/,
+         ".",
+         /[0-2]/,
+         /[0-5]/,
+         /[0-5]/,
+         ".",
+         /[0-2]/,
+         /[0-5]/,
+         /[0-5]/,
+       ]}
+       onChange={(e) => {
+         setValue((prevValue) => {
+           return { ...prevValue, input: e.target.value };
+         });
+       }}
+       placeholder="IP address"
+     />
+   ) : (
+     <div className="space-y-6">
+       <div className="border border-indigo-500 w-72 p-4 rounded">
+         <div
+           className="border border-indigo-500 cursor-pointer border-dashed flex flex-col fill-sky-700 text-sky-700  items-center justify-center rounded h-28"
+           onClick={() => {
+             browse.current.click();
+           }}
+         >
+           <input
+             onChange={(e) => {
+               setVideo({
+                 name: e.target.files[0].name,
+                 path: e.target.files[0],
+               });
+             }}
+             ref={browse}
+             type={"file"}
+             hidden
+           />
+           <div className="w-8 h-8">{cloud}</div>
+           <p className="text-sm font-semibold">Browse File to Upload</p>
+         </div>
+       </div>
+       {video.name && (
+         <div className="flex space-x-1 justify-between items-center">
+           <p className="w-40 truncate">{video.name}</p>
+           <button
+             className="bg-indigo-500 text-sm rounded py-2 px-4 uppercase text-white"
+             onClick={submitFileData}
+           >
+             jonatish
+           </button>
+         </div>
+       )}
+     </div>
+   )}
+ </form>
+ <p>{load}</p>
+ </>
   );
 }
